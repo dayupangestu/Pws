@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Learning Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+            border: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .material-item, .video-item {
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .material-item:hover, .video-item:hover {
+            background-color: #f1f8ff;
+        }
+
+        .pdf-content {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .video-content {
+            margin-top: 15px;
+            display: none;
+        }
+
+        .question-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .question-container.active {
+            display: block;
+        }
+
+        .quiz-progress {
+            margin-bottom: 20px;
+        }
+
+        .answer-option {
+            display: block;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .answer-option:hover {
+            background-color: #e9ecef;
+        }
+
+        .answer-option.selected {
+            background-color: #d1e7ff;
+            border-left: 4px solid #0d6efd;
+        }
+
+        .btn-next {
+            float: right;
+        }
+
+        .btn-prev {
+            float: left;
+        }
+
+        .navigation-buttons {
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .skill-check-card {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .skill-check-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #0d6efd;
+        }
+
+        .question-review {
+            border-radius: 8px;
+        }
+
+        .result-display {
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">E-Learning</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="home-link">Beranda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="materials-link">Materi Pembelajaran</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="videos-link">Video Pembelajaran</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="skill-link">Skill Check</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="practice-link">Latihan Soal</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="quiz-link">Quiz</a>
+                    </li>
+                </ul>
+                <div class="ms-auto d-flex">
+                    <div class="progress-container me-3">
+                        <small>Progress Belajar</small>
+                        <div class="progress" style="height: 10px; width: 150px;">
+                            <div class="progress-bar" id="global-progress" role="progressbar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline-light" id="login-btn" href="Loginindex.html">Masuk</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4" id="main-content">
+        <!-- Konten akan di-load dinamis di sini -->
+        <div class="text-center py-5">
+            <h1>Selamat Datang di Platform E-Learning</h1>
+            <p class="lead">Tingkatkan pengetahuan Anda dengan materi, video, dan latihan soal yang kami sediakan</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Data simulasi
+            const learningData = {
+                materials: [
+
+                    { 
+                        id: 1, 
+                        title: "PENDAHULUAN", 
+                        pdfContent: `
+                            <!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ikatan Kimia</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+            border-left: 4px solid #3498db;
+            padding-left: 10px;
+        }
+        h3 {
+            color: #16a085;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .center {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .page-number {
+            text-align: right;
+            font-size: 0.8em;
+            color: #7f8c8d;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ikatan Kimia</h1>
+
+    <h2>A. PENDAHULUAN</h2>
+    <ul>
+        <li><strong>Ikatan kimia</strong> adalah ikatan antara atom-atom untuk membentuk senyawa, sehingga mencapai kestabilan.</li>
+        <li><strong>Atom</strong> yang belum stabil menginginkan dirinya agar stabil seperti unsur gas mulia.</li>
+        <li><strong>Oleh karena itu</strong>, untuk mencapai kestabilan, suatu atom membentuk konfigurasi gas mulia, yaitu:
+            <ol>
+                <li><strong>Duplet</strong>, memiliki elektron valensi 2, seperti He.</li>
+                <li><strong>Oktet</strong>, memiliki elektron valensi 8, seperti Ne, Ar, Kr, Xe, Rn.</li>
+            </ol>
+        </li>
+        <li>Namun, kadang-kadang terjadi penyimpangan oktet, dimana elektron valensi jumlahnya lebih dari 8, namun atom tetap stabil.</li>
+        <li><strong>Ikatan kimia</strong> terdiri dari tiga jenis: ikatan ion, ikatan kovalen, dan ikatan logam.</li>
+    </ul>
+
+    <h2>B. IKATAN ION</h2>
+    <ul>
+        <li><strong>Ikatan ion</strong> adalah ikatan yang terjadi:
+            <ol>
+                <li>Berdasarkan serah terima/perpindahan elektron.</li>
+                <li>Antara ion positif dan ion negatif.</li>
+                <li>Antara unsur logam dan non-logam.</li>
+                <li>Antara unsur golongan IA dan IIA (+) dan golongan VIA dan VIIA (-).</li>
+            </ol>
+        </li>
+        <li><strong>Contoh senyawa ion</strong> antara lain: NaCl, MgCl₂, CaCl₂, KOH, KCl, dll.</li>
+    </ul>
+
+    <h3>Jalan terjadinya ikatan ion</h3>
+    <p>Contoh:</p>
+    <p>Atom Na berikatan dengan atom Cl,</p>
+    <p>Konfigurasi:</p>
+    <div class="center">
+        <table>
+            <tr>
+                <td>Na</td>
+                <td>:2.8.1</td>
+                <td>Na akan membentuk ion positif dan memberi elektron kepada Cl agar mencapai kestabilan.</td>
+            </tr>
+            <tr>
+                <td>Cl</td>
+                <td>:2.8.7</td>
+                <td>Cl akan membentuk ion negatif dan menerima elektron dari Na agar mencapai kestabilan.</td>
+            </tr>
+        </table>
+    </div>
+
+    <p>Reaksi yang dapat dituliskan:</p>
+    <div class="center">
+        <table>
+            <tr>
+                <td>Na</td>
+                <td>→ Na⁺ + e</td>
+                <td>2.8</td>
+            </tr>
+            <tr>
+                <td>Cl + e</td>
+                <td>→ Cl⁻</td>
+                <td>2.8.8</td>
+            </tr>
+        </table>
+    </div>
+
+    <p>Rumus molekul:</p>
+    <div class="center">
+        Na⁺ + Cl⁻ → NaCl
+    </div>
+
+    <p>Hasil akhir adalah terbentuknya senyawa NaCl yang stabil.</p>
+
+    <p>Atom Mg berikatan dengan atom Cl,</p>
+    <p>Konfigurasi:</p>
+    <div class="center">
+        <table>
+            <tr>
+                <td>Mg</td>
+                <td>:2.8.2</td>
+                <td>Mg akan membentuk ion positif dan memberi elektron kepada Cl agar mencapai kestabilan.</td>
+            </tr>
+            <tr>
+                <td>Cl</td>
+                <td>:2.8.7</td>
+                <td>Cl akan membentuk ion negatif dan menerima elektron dari Na agar mencapai kestabilan.</td>
+            </tr>
+        </table>
+    </div>
+
+    <p>Reaksi yang dapat dituliskan:</p>
+    <div class="center">
+        <table>
+            <tr>
+                <td>Mg</td>
+                <td>→ Mg²⁺ + 2e</td>
+                <td>2.8</td>
+            </tr>
+            <tr>
+                <td>Cl + e</td>
+                <td>→ Cl⁻</td>
+                <td>2.8.8</td>
+            </tr>
+        </table>
+    </div>
+
+    <p>Karena kedua atom muatannya tidak seimbang, maka hasil akhir dari ikatan dibutuhkan dua atom Cl untuk menerima 2 elektron atom Mg.</p>
+    <p>Reaksi yang dapat dituliskan:</p>
+    <div class="center">
+        <table>
+            <tr>
+                <td>Mg</td>
+                <td>→ Mg²⁺ + 2e</td>
+            </tr>
+            <tr>
+                <td>2Cl + 2e</td>
+                <td>→ 2Cl⁻</td>
+            </tr>
+        </table>
+    </div>
+
+    <p>Rumus molekul:</p>
+    <div class="center">
+        Mg²⁺ + 2Cl⁻ → MgCl₂
+    </div>
+
+    <p>Hasil akhir adalah terbentuknya senyawa MgCl₂ yang stabil.</p>
+
+    <p>Atom Ca berikatan dengan atom S,</p>
+    <p>Konfigurasi:</p>
+    <div class="center">
+        <table>
+            <tr>
+                <td>Ca</td>
+                <td>:2.8.2</td>
+                <td>Ca akan membentuk ion positif dan memberi elektron kepada S agar mencapai kestabilan.</td>
+            </tr>
+            <tr>
+                <td>S</td>
+                <td>:2.8.6</td>
+                <td>S akan membentuk ion negatif dan menerima elektron dari Ca agar mencapai kestabilan.</td>
+            </tr>
+        </table>
+    </div>
+
+    <p>Reaksi yang dapat dituliskan:</p>
+    <div class="center">
+        <table>
+            <tr>
+                <td>Ca</td>
+                <td>→ Ca²⁺ + 2e</td>
+                <td>2.8.8</td>
+            </tr>
+            <tr>
+                <td>S + 2e</td>
+                <td>→ S²⁻</td>
+                <td>2.8.8</td>
+            </tr>
+        </table>
+    </div>
+
+    <p>Rumus molekul:</p>
+    <div class="center">
+        Ca²⁺ + S²⁻ → CaS
+    </div>
+
+    <p>Hasil akhir adalah terbentuknya senyawa CaS yang stabil.</p>
+
+    <h2>C. IKATAN KOVALEN</h2>
+    <ul>
+        <li><strong>Ikatan kovalen</strong> adalah ikatan yang terjadi:
+            <ol>
+                <li>Berdasarkan pemakaian pasangan elektron bersama.</li>
+                <li>Antara unsur non-logam dan non-logam.</li>
+                <li>Ikatan kovalen terdiri dari tiga jenis: ikatan kovalen biasa, ikatan kovalen rangkap, ikatan kovalen koordinat.</li>
+            </ol>
+        </li>
+    </ul>
+
+    <h3>Ikatan kovalen dituliskan menggunakan rumus Lewis dan rumus bangun/struktur molekul.</h3>
+    <ol>
+        <li><strong>Rumus Lewis</strong> (rumus elektron)
+            <p>Rumus Lewis menggambarkan bagaimana keadaan elektron-elektron valensi atom-atom saling berpasangan dan saling berikatan secara kovalen.</p>
+        </li>
+        <li><strong>Rumus bangun</strong> (struktur molekul)
+            <p>Rumus bangun menggambarkan bagaimana cara ikatan kovalen yang digunakan atom-atom.</p>
+            <ul>
+                <li>Garis satu (-) melambangkan ikatan kovalen biasa.</li>
+                <li>Garis dua (=) atau tiga (≡) melambangkan ikatan kovalen rangkap.</li>
+                <li>Tanda panah (→) melambangkan ikatan kovalen koordinat.</li>
+            </ul>
+        </li>
+    </ol>
+
+    <h3>Contoh senyawa kovalen</h3>
+    <p>antara lain: H₂O, HF, HCl, CO₂, NH₃, Cl₂, I₂, Br₂, O₂, dll.</p>
+
+    <h4>IKATAN KOVALEN BIASA</h4>
+    <p><strong>Ikatan kovalen biasa</strong> adalah ikatan kovalen yang jumlah pemakaian elektron bersamanya adalah satu pasang.</p>
+    
+    <div class="center">
+        <table>
+            <tr>
+                <th>Hidrogen klorida (HCl)</th>
+                <th>Air (H₂O)</th>
+            </tr>
+            <tr>
+                <td>
+                    <p><strong>Konfigurasi</strong> H : 1</p>
+                    <p><strong>Konfigurasi</strong> Cl : 2.8.7</p>
+                    <p><strong>Rumus Lewis</strong></p>
+                    <p><strong>Rumus bangun</strong></p>
+                </td>
+                <td>
+                    <p><strong>Konfigurasi</strong> H : 1</p>
+                    <p><strong>Konfigurasi</strong> O : 2.6</p>
+                    <p><strong>Rumus Lewis</strong></p>
+                    <p><strong>Rumus bangun</strong></p>
+                </td>
+            </tr>
+            <tr>
+                <th>Amonia (NH₃)</th>
+                <th>Metana (CH₄)</th>
+            </tr>
+            <tr>
+                <td>
+                    <p><strong>Konfigurasi</strong> H : 1</p>
+                    <p><strong>Konfigurasi</strong> N : 2.5</p>
+                    <p><strong>Rumus Lewis</strong></p>
+                    <p><strong>Rumus bangun</strong></p>
+                </td>
+                <td>
+                    <p><strong>Konfigurasi</strong> H : 1</p>
+                    <p><strong>Konfigurasi</strong> C : 2.4</p>
+                    <p><strong>Rumus Lewis</strong></p>
+                    <p><strong>Rumus bangun</strong></p>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <h4>IKATAN KOVALEN RANGKAP</h4>
+    <p><strong>Ikatan kovalen rangkap</strong> adalah ikatan kovalen yang jumlah pemakaian elektron bersamanya lebih dari satu pasang.</p>
+    
+    <div class="center">
+        <table>
+            <tr>
+                <th>Oksigen (O₂)</th>
+                <th>Nitrogen (N₂)</th>
+            </tr>
+            <tr>
+                <td>
+                    <p><strong>Konfigurasi</strong> O : 2.6</p>
+                    <p><strong>Rumus Lewis</strong></p>
+                    <p><strong>Rumus bangun</strong></p>
+                </td>
+                <td>
+                    <p><strong>Konfigurasi</strong> N : 2.5</p>
+                    <p><strong>Rumus Lewis</strong></p>
+                    <p><strong>Rumus bangun</strong></p>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <h3>IKATAN KOVALEN KOORDINAT</h3>
+    <p>Ikatan kovalen koordinat adalah ikatan kovalen yang pemakaian elektron bersamanya hanya berasal dari satu atom.</p>
+    
+    <div class="center">
+        <table>
+            <tr>
+                <th>Amonium (NH₄⁺)</th>
+                <th>Amino boron trifluorida (BF₃NH₃)</th>
+            </tr>
+            <tr>
+                <td>
+                    <p><strong>Rumus Lewis</strong></p>
+                    <p><strong>Rumus bangun</strong></p>
+                </td>
+                <td>
+                    <p><strong>Rumus Lewis</strong></p>
+                    <p><strong>Rumus bangun</strong></p>
+                    <p>BF₃ + NH₃ → BF₃NH₃</p>
+                    <p>BF₃ dan NH₃ menggunakan elektron valensi bebas dari NH₃ bersama.</p>
+                </td>
+            </tr>
+            <tr>
+                <th>Asam sulfat (H₂SO₄)</th>
+                <th>Asam nitrat (HNO₃)</th>
+            </tr>
+            <tr>
+                <td>
+                    <p><strong>Rumus Lewis</strong></p>
+                    <p><strong>Rumus bangun</strong></p>
+                </td>
+                <td>
+                    <p><strong>Rumus Lewis</strong></p>
+                    <p><strong>Rumus bangun</strong></p>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <h2>D. KEPOLARAN</h2>
+    <ul>
+        <li><strong>Kepolaran senyawa</strong> adalah perilaku suatu zat yang menyerupai medan magnet, yaitu terdapat kutub sementara yang disebut dipol.</li>
+        <li><strong>Kepolaran senyawa</strong> terdapat pada senyawa kovalen, dan dibagi menjadi dua, yaitu:
+            <ol>
+                <li><strong>Senyawa kovalen polar</strong>
+                    <p>Adalah senyawa kovalen yang dibentuk oleh dua unsur berbeda, dimana keelektronegatifan pasti berbeda, sehingga menghasilkan dipol.</p>
+                    <p>Contoh: HCl, HBr, HI, H₂O.</p>
+                </li>
+                <li><strong>Senyawa kovalen non-polar</strong>
+                    <p>Adalah senyawa kovalen yang dibentuk oleh dua unsur sama, dimana keelektronegatifan pasti sama.</p>
+                    <p>Contoh: H₂, Cl₂, O₂, N₂, dan senyawa poliatomik lainnya.</p>
+                </li>
+            </ol>
+        </li>
+        <li><strong>Tingkat kepolaran senyawa</strong> dinyatakan dalam <strong>momen dipol</strong> dalam satuan Coulomb meter. Senyawa non-polar memiliki momen dipol nol.</li>
+    </ul>
+
+    <h2>E. PERBEDAAN IKATAN ION DAN KOVALEN</h2>
+    <p>Senyawa ionik dan kovalen memiliki beberapa perbedaan sifat, antara lain:</p>
+    
+    <div class="center">
+        <table>
+            <tr>
+                <th>Sifat</th>
+                <th>Senyawa ionik</th>
+                <th>Senyawa kovalen</th>
+            </tr>
+            <tr>
+                <td>Titik leleh dan titik didih</td>
+                <td>tinggi</td>
+                <td>rendah</td>
+            </tr>
+            <tr>
+                <td>Wujud keadaan kamar</td>
+                <td>padat</td>
+                <td>padat, cair, dan gas</td>
+            </tr>
+            <tr>
+                <td>Volatilitas (kemudahan menguap)</td>
+                <td>non-volatil</td>
+                <td>volatil</td>
+            </tr>
+            <tr>
+                <td>Kelarutan pada pelarut polar</td>
+                <td>larut (pada air)</td>
+                <td>tidak larut</td>
+            </tr>
+            <tr>
+                <td>Kelarutan pada pelarut non-polar</td>
+                <td>tidak larut</td>
+                <td>larut</td>
+            </tr>
+            <tr>
+                <td>Daya hantar listrik larutan</td>
+                <td>menghantar</td>
+                <td>menghantar</td>
+            </tr>
+            <tr>
+                <td>Daya hantar listrik lelehan</td>
+                <td>menghantar</td>
+                <td>tidak menghantar</td>
+            </tr>
+        </table>
+    </div>
+
+    <h2>F. IKATAN LOGAM</h2>
+    <ul>
+        <li><strong>Ikatan logam</strong> adalah ikatan yang terjadi:
+            <ol>
+                <li>Antar atom-atom unsur logam.</li>
+                <li>Antara elektron valensi logam yang membentuk lautan valensi.</li>
+            </ol>
+        </li>
+        <li><strong>Unsur logam</strong> kulit terluarnya relatif longgar, karena memiliki sedikit elektron valensi. Elektron valensi tersebut mengalami delokalisasi.</li>
+        <li><strong>Delokalisasi</strong> adalah keadaan dimana posisi elektron tidak tetap dan berpindah-pindah, sehingga berbaur menyerupai awan/lautan valensi.</li>
+        <li><strong>Awan/lautan valensi</strong> tersebut bertindak sebagai perekat atom logam yang saling tarik-menarik dan berdekatan satu sama lain.</li>
+        <li><strong>Ikatan logam</strong> menjadikan logam:
+            <ol>
+                <li>Keras namun lentur.</li>
+                <li>Tidak mudah patah meski ditempa.</li>
+                <li>Titik leleh dan titik didih yang tinggi.</li>
+                <li>Konduktor listrik dan panas yang baik.</li>
+            </ol>
+        </li>
+    </ul>
+
+    <div class="page-number">IKATAN KIMIA 4 78</div>
+</body>
+</html>
+                        ` 
+                        
+                    },
+                    
+                    
+                    {
+                      id: 4,
+                      title: "spektroskopi",
+                      pdfContent:`
+                      <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spektrofotometri Massa</title>
+</head>
+<body>
+    <h1>Spektrofotometri Massa</h1>
+
+    <h2>Definisi</h2>
+    <p>
+        Spektroskopi massa adalah suatu teknik analisis berdasarkan pemisahan berkas ion-ion yang sesuai dengan perbandingan massa dengan muatan dan pengukuran intensitas dari berkas ion-ion tersebut.
+    </p>
+
+    <h2>SPEKTROSKOPI MASSA</h2>
+    <h3>Prinsip Dasar Kerja Spektroskopi Massa</h3>
+    <ul>
+        <li>Menghasilkan berkas sinar kation dari zat.</li>
+        <li>Menghasilkan berkas kation menjadi bentuk spektrum massa (m/z).</li>
+        <li>Mendeteksi dan mencatat nilai massa relatif (m/z) dan kelimpahan isotopnya (%) atau intensitasnya.</li>
+    </ul>
+
+    <h3>Manfaat Analisis Secara Mass Spectra:</h3>
+    <ul>
+        <li>Menentukan massa suatu molekul.</li>
+        <li>Menentukan rumus molekul dengan menggunakan Spektrum Massa Beresolusi Tinggi (High Resolution Mass Spectra).</li>
+        <li>Mengetahui informasi struktur dengan melihat pola fragmentasinya.</li>
+    </ul>
+
+    <h2>PRINSIP KERJA SPEKTROMETER MASSA</h2>
+    <p>
+        Senyawa cuplikan uap senyawa cuplikan ditembak dengan elektron berenergi tinggi (70 eV) dalam vakum tinggi (10<sup>-5</sup>-10<sup>-6</sup> mmHg). Ion molekul mengalami fragmentasi (10<sup>-2</sup>-10<sup>-10</sup> detik) dan dideteksi serta direkam pada peta grafik sesuai harga m/z.
+    </p>
+    <p>
+        Dalam spektroskopi massa, molekul-molekul senyawa organik ditembak dengan berkas elektron dan diubah menjadi ion-ion positif yang bertenaga tinggi (ion-ion molekuler atau ion-ion induk), yang dapat dipecah-pecah menjadi ion-ion yang lebih kecil (ion-ion pecahan). Lepasnya elektron dari molekul akan menghasilkan radikal kation.
+    </p>
+
+    <h2>ATURAN FRAGMENTASI STEPHENSON-AUDIER (ATURAN ELEKTRON GENAP)</h2>
+    <p>
+        <strong>A → B</strong><br>
+        A<sup>+</sup> + B<sup>.</sup><br>
+        A<sup>+</sup> + B<sup>+</sup><br>
+        A + B<sup>+</sup><br>
+        A + B<br>
+        AB<sup>+</sup><br>
+        A<sup>+</sup> + B<sup>+</sup><br>
+        (Ganjil)<br>
+        (Genap)
+    </p>
+
+    <h3>Fragmentasi</h3>
+    <ol>
+        <li>Senyawa aromatik tersubstitusi memberikan kation benzi atau kation tropilinium (m/z = 91).</li>
+        <li>Ikatan rangkap dua (olefin) cenderung putus pada posisi alilat. Olefin siklis memberikan pemutusan tipe Diels-Alder retro.</li>
+        <li>Senyawa yang memiliki atom hidrogen-γ terhadap gugus karbonil, amina, amida, nitril, sulfida, dan alkohol mengalami penataan ulang Mc Lafferty.</li>
+        <li>Pemutusan ikatan tunggal mengarah pada pembentukan karbokation yang lebih stabil (stabilitas karbokation: 3° > 2° > 1° > metil).</li>
+        <li>Pemutusan alkohol terjadi pada ikatan: C-O, C-C αβ (pemutusan α), dan pelepasan H<sub>2</sub>O dari gugus OH dan Hγ.</li>
+        <li>Pemutusan keton terjadi pada ikatan C-C yang berdekatan dengan gugus karbonil serta penataan ulang Mc Lafferty jika terdapat atom Hγ.</li>
+        <li>Pemutusan eter terjadi pada ikatan: C-O dan C-C αβ.</li>
+        <li>Pemutusan amina terjadi pada ikatan C-C αβ.</li>
+        <li>Pemutusan hidrokarbon aromatik (-C<sub>2</sub>H<sub>2</sub>, m/z = 77, m/z = 51, m/z = 91, m/z = 65).</li>
+        <li>Pemutusan hidrokarbon alisiklik (-C<sub>2</sub>H<sub>4</sub>).</li>
+        <li>Pemutusan epoksida (eter siklik).</li>
+    </ol>
+
+    <h2>Contoh Spektrum Massa</h2>
+    <h3>SPEKTRUM MASSA n-PENTANA</h3>
+    <p>
+        Pola fragmentasi n-pentana:<br>
+        H<sub>3</sub>C - CH<sub>2</sub> - CH<sub>2</sub> - CH<sub>2</sub> - CH<sub>3</sub><br>
+        m/z = 72, m/z = 15, m/z = 57, m/z = 29, m/z = 43.
+    </p>
+
+    <h3>SPEKTRUM MASSA 2-METIL BUTANA</h3>
+    <p>
+        Pola fragmentasi s-butil isopropil eter:<br>
+        H<sub>3</sub>C - CH<sub>2</sub> - CH(OCH<sub>3</sub>) - CH<sub>3</sub><br>
+        m/z = 116, m/z = 43, m/z = 73, m/z = 57, m/z = 59, m/z = 87, m/z = 29, m/z = 15, m/z = 101.
+    </p>
+
+    <h3>SPEKTRUM MASSA 2-HEKSANOL</h3>
+    <p>
+        Pola fragmentasi 2-heksanol:<br>
+        H<sub>3</sub>C - CH<sub>2</sub> - CH<sub>2</sub> - CH<sub>2</sub> - C(OH) - CH<sub>3</sub><br>
+        m/z = 102, m/z = 17, m/z = 85, m/z = 15, m/z = 87, m/z = 57, m/z = 45.
+    </p>
+
+    <h3>SPEKTRUM MASSA 2-PENTANON</h3>
+    <p>
+        Pola fragmentasi 2-pentanon:<br>
+        H<sub>3</sub>C - CH<sub>2</sub> - CH<sub>2</sub> - C(=O) - CH<sub>3</sub><br>
+        m/z = 86, m/z = 29, m/z = 57.
+    </p>
+
+    <h2>MANAKAH SPEKTRUM MASSA DARI ZAT BERIKUT?</h2>
+    <p>
+        Pembahasan:<br>
+        Contoh spektrum massa untuk beberapa senyawa:<br>
+        <ul>
+            <li>m/z = 86, m/z = 15, m/z = 71, m/z = 43.</li>
+            <li>m/z = 86, m/z = 71, m/z = 15, m/z = 43.</li>
+        </ul>
+    </p>
+</body>
+</html>
+                      
+                      `
+                    },
+                    { 
+                        id: 3, 
+                        title: "SORPSI"
+                        ,
+                        pdfContent: `
+                          <!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+<body>
+    <h1></h1>
+
+    <h2>PENGERTIAN</h2>
+    <ul>
+        <li><strong>SORPSI</strong> adalah proses penyerapan ion oleh partikel penyerap (sorban).</li>
+        <li>Proses sorpsi dibagi menjadi dua:
+            <ol>
+                <li>Adsorpsi</li>
+                <li>Absorpsi</li>
+            </ol>
+        </li>
+    </ul>
+
+    <h2>PROSES ADSORPSI</h2>
+    <p>Terjadi jika ion tertahan pada permukaan partikel penyerap (adsorban).</p>
+
+    <h2>PROSES ABSORPSI</h2>
+    <p>Terjadi jika ion terikat di dalam partikel penyerap.</p>
+    <p>Adsorpsi umumnya terjadi berdasarkan interaksi antara logam dengan gugus fungsional yang ada pada permukaan adsorben melalui interaksi pertukaran ion atau pembentukan kompleks, biasanya terjadi pada permukaan padatan yang mengandung gugus fungsional seperti –OH, -NH, -SH dan COOH.</p>
+
+    <h2>JENIS ADSORPSI</h2>
+    <ol>
+        <li><strong>Adsorpsi fisika</strong>
+            <ul>
+                <li>Disebabkan oleh gaya Van Der Waals.</li>
+                <li>Proses reversibel.</li>
+            </ul>
+        </li>
+        <li><strong>Adsorpsi kimia</strong>
+            <ul>
+                <li>Terbentuk ikatan kimia antara molekul-molekul adsorbat dengan adsorben.</li>
+                <li>Proses irreversibel.</li>
+            </ul>
+        </li>
+    </ol>
+
+    <h2>MEKANISME ADSORPSI</h2>
+    <ol>
+        <li>Transfer molekul-molekul zat terlarut yang teradsorpsi menuju lapisan film yang mengelilingi adsorben.</li>
+        <li>Difusi zat terlarut yang teradsorpsi melalui lapisan film yang mengelilingi adsorben (film diffusion process).</li>
+        <li>Difusi zat terlarut yang teradsorpsi melalui kapiler atau pori dalam adsorben (pore diffusion process).</li>
+        <li>Adsorpsi zat terlarut yang teradsorpsi pada dinding pori atau permukaan adsorben.</li>
+    </ol>
+
+    <h2>Faktor yang Mempengaruhi Daya Adsorpsi</h2>
+    <ol>
+        <li><strong>Jenis Adsorbat</strong>
+            <ul>
+                <li>Ukuran molekul adsorbat</li>
+                <li>Sifat kepolaran zat</li>
+            </ul>
+        </li>
+        <li><strong>Karakteristik Adsorben</strong>
+            <ul>
+                <li>Kemurnian Adsorben</li>
+                <li>Luas permukaan dan volume pori adsorben</li>
+                <li>Temperatur</li>
+            </ul>
+        </li>
+    </ol>
+</body>
+</html>
+                        ` 
+                    }
+                    
+                ],
+                videos: [
+                    { 
+                        id: 1, 
+                        title: "spektrometri massa", 
+                        embedCode: '<iframe width="560" height="315" src="https://www.youtube.com/embed//Rvbez7TqWlA?feature=shared" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>' 
+                    },
+                    { 
+                        id: 2, 
+                        title: "ikatan kimia", 
+                        embedCode: '<iframe width="560" height="315" src="https://www.youtube.com/embed/0fCUwiwLudE?si=l7Z0PukBEMibxORS" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>' 
+                    }
+                ],
+                practiceQuestions: [
+                    {
+                        id: 1,
+                        question: "Apa jenis ikatan kimia yang terbentuk antara atom natrium (Na) dan atom klorin (Cl)?",
+                        options: [
+                            
+                      "A) Ikatan kovalen",
+                      "B) Ikatan ionik",
+                      "C) Ikatan logam",
+                      "D) Ikatan hidrogen",
+                        ],
+                        answer: 1
+                    },
+                    
+                    
+                                        {
+                        id: 2,
+                        question: "Ikatan kimia yang terbentuk karena penggunaan bersama pasangan elektron antara atom-atom disebut...",
+                        options: [
+                      "A) Ikatan ionik",
+                      "B) Ikatan kovalen",
+                      "C) Ikatan logam",
+                      "D) Ikatan van der Waals",
+                        ],
+                        answer: 2
+                    },
+                    
+                    
+                                                            {
+                        id: 3,
+                        question: "senyawa yang memiliki ikatan konvalen adalah..",
+                        options: [
+                      "A) NaCI",
+                      "B) H20",
+                      "C) Ca0",
+                      "D) KCI",
+                        ],
+                        answer: 3
+                    },
+                    
+                                                            {
+                        id: 4,
+                        question: "apa yang di maksud dengan keelektronegatifan.",
+                        options: [
+                      "A) kemampuan atom untuk menarik elektron",
+                      "B) kemampuan atom untuk melepaskan elektron",
+                      "C) kemampuan atom untuk membentuk ikatan kimia",
+                      "D) kemampuan atom untuk menghantarkan listrik",
+                        ],
+                        answer: 2
+                    },
+                    
+                                                            {
+                        id: 5,
+                        question: "ikatan kimia yang berbentuk antara atom-atom logam di sebut...",
+                        options: [
+                      "A) Ikatan ionik",
+                      "B) Ikatan kovalen",
+                      "C) Ikatan logam",
+                      "D) Ikatan hidrogen",
+                        ],
+                        answer: 2
+                    },
+
+                    
+                ],
+                quizQuestions: [
+                    {
+                        id: 1,
+                        question: "Manakah dari pernyataan berikut yang benar tentang ikatan ionik?",
+                        options: [
+                          
+"A) Terbentuk karena penggunaan bersama pasangan elektron",
+"B) Terbentuk karena perpindahan elektron dari satu atom ke atom lain",
+"C) Terbentuk antara atom-atom yang memiliki keelektronegatifan yang sama",
+"D) Terbentuk antara atom-atom yang memiliki keelektronegatifan yang berbeda",
+                        ],
+                        answer: 1
+                    },
+                    {
+                        id: 2,
+                        question: "manakah dari senyawa berikut yang memiliki ikatan kovalen polar",
+                        options: [
+                            
+                        "A) H2",
+                        "B) O2",
+                        "C) HCl",
+                        "D) NaCl",
+                        ],
+                        answer: 2
+                    },
+                    {
+                        id: 3,
+                        question: "Manakah yang BUKAN tipe data JavaScript?",
+                        options: [
+                            "string",
+                            "boolean",
+                            "number",
+                            "character"
+                        ],
+                        answer: 3
+                    }
+                ]
+            };
+
+            // Variabel state
+            let currentPracticeQuestion = 0;
+            let currentQuizQuestion = 0;
+            let userAnswers = {};
+            let quizAnswers = {};
+            let progress = 0;
+
+            // Elemen DOM
+            const mainContent = document.getElementById('main-content');
+            const globalProgress = document.getElementById('global-progress');
+
+            // Fungsi navigasi
+            document.getElementById('home-link').addEventListener('click', () => loadHomePage());
+            document.getElementById('materials-link').addEventListener('click', () => loadMaterialsPage());
+            document.getElementById('videos-link').addEventListener('click', () => loadVideosPage());
+            document.getElementById('skill-link').addEventListener('click', () => loadSkillCheckPage());
+            document.getElementById('practice-link').addEventListener('click', () => loadPracticePage());
+            document.getElementById('quiz-link').addEventListener('click', () => loadQuizPage());
+            document.getElementById('login-btn').addEventListener('click', () => {
+                alert('Fitur login akan segera tersedia!');
+            });
+
+            // Fungsi untuk memuat halaman
+            function loadHomePage() {
+                mainContent.innerHTML = `
+                    <div class="text-center py-5">
+                        <h1>Selamat Datang di Platform E-Learning</h1>
+                        <p class="lead">Tingkatkan pengetahuan Anda dengan materi, video, dan latihan soal yang kami sediakan</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Materi Pembelajaran</h5>
+                                    <p class="card-text">Akses berbagai materi pembelajaran dalam format PDF yang dapat Anda pelajari kapan saja.</p>
+                                    <a href="#" class="btn btn-primary" id="materials-link-card">Lihat Materi</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Video Pembelajaran</h5>
+                                    <p class="card-text">Belajar melalui video tutorial yang interaktif dan mudah dipahami.</p>
+                                    <a href="#" class="btn btn-primary" id="videos-link-card">Lihat Video</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Latihan & Quiz</h5>
+                                    <p class="card-text">Uji pemahaman Anda dengan latihan soal dan quiz interaktif.</p>
+                                    <a href="#" class="btn btn-primary" id="practice-link-card">Mulai Latihan</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('materials-link-card').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadMaterialsPage();
+                });
+                document.getElementById('videos-link-card').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadVideosPage();
+                });
+                document.getElementById('practice-link-card').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadPracticePage();
+                });
+            }
+
+            function loadMaterialsPage() {
+                let materialsHTML = '<h2 class="mb-4">Materi Pembelajaran</h2><div class="list-group">';
+                
+                learningData.materials.forEach(material => {
+                    materialsHTML += `
+                        <div class="material-item list-group-item" data-id="${material.id}">
+                            <h5>${material.title}</h5>
+                            <small>Klik untuk melihat materi</small>
+                        </div>
+                        <div class="pdf-content" id="material-${material.id}">
+                            <h5>${material.title}</h5>
+                            <hr>
+                            <div class="pdf-view">
+                                ${material.pdfContent}
+                            </div>
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-success mark-as-read" data-material="${material.id}">Tandai Sudah Dibaca</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                materialsHTML += '</div>';
+                mainContent.innerHTML = materialsHTML;
+                
+                // Tambahkan event listener untuk material items
+                document.querySelectorAll('.material-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        const materialId = this.getAttribute('data-id');
+                        const pdfContent = document.getElementById(`material-${materialId}`);
+                        
+                        // Toggle display
+                        if (pdfContent.style.display === 'block') {
+                            pdfContent.style.display = 'none';
+                        } else {
+                            pdfContent.style.display = 'block';
+                        }
+                    });
+                });
+                
+                // Tambahkan event listener untuk tombol tandai sudah dibaca
+                document.querySelectorAll('.mark-as-read').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const materialId = this.getAttribute('data-material');
+                        updateProgress(10); // Tambah progress 10% per materi yang dibaca
+                        this.textContent = "✓ Sudah Dibaca";
+                        this.classList.remove('btn-outline-success');
+                        this.classList.add('btn-success');
+                        this.disabled = true;
+                    });
+                });
+            }
+
+            function loadVideosPage() {
+                let videosHTML = '<h2 class="mb-4">Video Pembelajaran</h2><div class="list-group">';
+                
+                learningData.videos.forEach(video => {
+                    videosHTML += `
+                        <div class="video-item list-group-item" data-id="${video.id}">
+                            <h5>${video.title}</h5>
+                            <small>Klik untuk menonton video</small>
+                        </div>
+                        <div class="video-content" id="video-${video.id}">
+                            <h5>${video.title}</h5>
+                            <hr>
+                            <div class="ratio ratio-16x9">
+                                ${video.embedCode}
+                            </div>
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-success mark-as-watched" data-video="${video.id}">Tandai Sudah Ditonton</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                videosHTML += '</div>';
+                mainContent.innerHTML = videosHTML;
+                
+                // Tambahkan event listener untuk video items
+                document.querySelectorAll('.video-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        const videoId = this.getAttribute('data-id');
+                        const videoContent = document.getElementById(`video-${videoId}`);
+                        
+                        // Toggle display
+                        if (videoContent.style.display === 'block') {
+                            videoContent.style.display = 'none';
+                        } else {
+                            videoContent.style.display = 'block';
+                        }
+                    });
+                });
+                
+                // Tambahkan event listener untuk tombol tandai sudah ditonton
+                document.querySelectorAll('.mark-as-watched').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const videoId = this.getAttribute('data-video');
+                        updateProgress(15); // Tambah progress 15% per video yang ditonton
+                        this.textContent = "✓ Sudah Ditonton";
+                        this.classList.remove('btn-outline-success');
+                        this.classList.add('btn-success');
+                        this.disabled = true;
+                    });
+                });
+            }
+
+            function loadSkillCheckPage() {
+                mainContent.innerHTML = `
+                    <h2 class="mb-4">Skill Check</h2>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card skill-check-card">
+                                <div class="skill-check-icon">📚</div>
+                                <h4>Pemahaman Materi</h4>
+                                <p>Uji pemahaman Anda terhadap materi yang sudah dipelajari</p>
+                                <button class="btn btn-primary" id="test-understanding">Mulai Tes</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card skill-check-card">
+                                <div class="skill-check-icon">✍️</div>
+                                <h4>Latihan Praktik</h4>
+                                <p>Praktikkan langsung apa yang sudah Anda pelajari</p>
+                                <button class="btn btn-primary" id="practice-skill">Mulai Praktik</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card skill-check-card">
+                                <div class="skill-check-icon">🧠</div>
+                                <h4>Evaluasi Diri</h4>
+                                <p>Lihat sejauh mana perkembangan belajar Anda</p>
+                                <button class="btn btn-primary" id="self-evaluation">Lihat Progress</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('test-understanding').addEventListener('click', () => loadPracticePage());
+                document.getElementById('practice-skill').addEventListener('click', () => alert('Fitur praktik akan segera tersedia!'));
+                document.getElementById('self-evaluation').addEventListener('click', () => {
+                    alert(`Progress belajar Anda saat ini: ${progress}%`);
+                });
+            }
+
+            function loadPracticePage() {
+                if (learningData.practiceQuestions.length === 0) {
+                    mainContent.innerHTML = '<div class="alert alert-info">Tidak ada soal latihan tersedia saat ini.</div>';
+                    return;
+                }
+                
+                currentPracticeQuestion = 0;
+                userAnswers = {};
+                renderPracticeQuestion(currentPracticeQuestion);
+            }
+
+            function renderPracticeQuestion(index) {
+                const question = learningData.practiceQuestions[index];
+                
+                let optionsHTML = '';
+                question.options.forEach((option, i) => {
+                    const isSelected = userAnswers[question.id] === i ? 'selected' : '';
+                    optionsHTML += `
+                        <div class="answer-option ${isSelected}" data-option="${i}">
+                            ${option}
+                        </div>
+                    `;
+                });
+                
+                mainContent.innerHTML = `
+                    <h2 class="mb-4">Latihan Soal</h2>
+                    <div class="quiz-progress">
+                        <div class="d-flex justify-content-between">
+                            <span>Soal ${index + 1} dari ${learningData.practiceQuestions.length}</span>
+                            <span>${Math.round(((index) / learningData.practiceQuestions.length) * 100)}% selesai</span>
+                        </div>
+                        <div class="progress mt-2">
+                            <div class="progress-bar" role="progressbar" style="width: ${((index) / learningData.practiceQuestions.length) * 100}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-container active">
+                        <h4>${question.question}</h4>
+                        <div class="options mt-4">
+                            ${optionsHTML}
+                        </div>
+                        
+                        <div class="navigation-buttons">
+                            ${index > 0 ? '<button class="btn btn-secondary btn-prev">Sebelumnya</button>' : ''}
+                            ${index < learningData.practiceQuestions.length - 1 ? 
+                                '<button class="btn btn-primary btn-next">Selanjutnya</button>' : 
+                                '<button class="btn btn-success btn-finish">Selesai</button>'}
+                        </div>
+                    </div>
+                `;
+                
+                // Tambahkan event listener untuk pilihan jawaban
+                document.querySelectorAll('.answer-option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        // Hapus selected dari semua option
+                        document.querySelectorAll('.answer-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        
+                        // Tambahkan selected ke option yang diklik
+                        this.classList.add('selected');
+                        
+                        // Simpan jawaban user
+                        userAnswers[question.id] = parseInt(this.getAttribute('data-option'));
+                    });
+                });
+                
+                // Tambahkan event listener untuk tombol navigasi
+                if (index > 0) {
+                    document.querySelector('.btn-prev').addEventListener('click', () => {
+                        currentPracticeQuestion--;
+                        renderPracticeQuestion(currentPracticeQuestion);
+                    });
+                }
+                
+                if (index < learningData.practiceQuestions.length - 1) {
+                    document.querySelector('.btn-next').addEventListener('click', () => {
+                        if (userAnswers[question.id] !== undefined) {
+                            currentPracticeQuestion++;
+                            renderPracticeQuestion(currentPracticeQuestion);
+                        } else {
+                            alert('Silakan pilih jawaban terlebih dahulu!');
+                        }
+                    });
+                } else {
+                    document.querySelector('.btn-finish').addEventListener('click', finishPractice);
+                }
+            }
+
+            function finishPractice() {
+                const question = learningData.practiceQuestions[currentPracticeQuestion];
+                if (userAnswers[question.id] === undefined) {
+                    alert('Silakan pilih jawaban terlebih dahulu!');
+                    return;
+                }
+
+                // Hitung skor
+                let score = 0;
+                learningData.practiceQuestions.forEach(question => {
+                    if (userAnswers[question.id] === question.answer) {
+                        score++;
+                    }
+                });
+                
+                const percentage = (score / learningData.practiceQuestions.length) * 100;
+                updateProgress(percentage / 5); // Tambah progress berdasarkan performa
+                
+                mainContent.innerHTML = `
+                    <div class="text-center py-5">
+                        <h2>Hasil Latihan Soal</h2>
+                        <div class="result-display mt-4 mb-4">
+                            <div class="display-4 ${percentage >= 70 ? 'text-success' : 'text-warning'}">${percentage.toFixed(1)}%</div>
+                            <p>Anda menjawab benar ${score} dari ${learningData.practiceQuestions.length} soal</p>
+                        </div>
+                        ${percentage >= 70 ? 
+                            '<div class="alert alert-success">Selamat! Anda telah menguasai materi ini dengan baik.</div>' : 
+                            '<div class="alert alert-warning">Anda perlu mempelajari kembali beberapa materi. Jangan menyerah!</div>'}
+                        <button class="btn btn-primary mt-3" id="review-answers">Review Jawaban</button>
+                        <button class="btn btn-outline-secondary mt-3" id="back-to-materials">Kembali ke Materi</button>
+                    </div>
+                `;
+                
+                document.getElementById('review-answers').addEventListener('click', reviewPracticeAnswers);
+                document.getElementById('back-to-materials').addEventListener('click', loadMaterialsPage);
+            }
+
+            function reviewPracticeAnswers() {
+                let reviewHTML = '<h2 class="mb-4">Review Jawaban</h2>';
+                
+                learningData.practiceQuestions.forEach((question, index) => {
+                    const userAnswer = userAnswers[question.id];
+                    const isCorrect = userAnswer === question.answer;
+                    
+                    reviewHTML += `
+                        <div class="question-review mb-4 p-3 ${isCorrect ? 'bg-success bg-opacity-10' : 'bg-danger bg-opacity-10'}">
+                            <h5>Soal ${index + 1}: ${question.question}</h5>
+                            <p class="mb-1">Jawaban Anda: <strong>${question.options[userAnswer] || 'Tidak dijawab'}</strong></p>
+                            ${!isCorrect ? `<p class="mb-1">Jawaban benar: <strong>${question.options[question.answer]}</strong></p>` : ''}
+                            <p class="mt-2 mb-0 text-muted"><small>${isCorrect ? '✓ Benar' : '✗ Salah'}</small></p>
+                        </div>
+                    `;
+                });
+                
+                reviewHTML += `
+                    <div class="text-center mt-4">
+                        <button class="btn btn-primary" id="back-to-results">Kembali ke Hasil</button>
+                    </div>
+                `;
+                
+                mainContent.innerHTML = reviewHTML;
+                document.getElementById('back-to-results').addEventListener('click', finishPractice);
+            }
+
+            function loadQuizPage() {
+                if (learningData.quizQuestions.length === 0) {
+                    mainContent.innerHTML = '<div class="alert alert-info">Tidak ada quiz tersedia saat ini.</div>';
+                    return;
+                }
+                
+                currentQuizQuestion = 0;
+                quizAnswers = {};
+                renderQuizQuestion(currentQuizQuestion);
+            }
+
+            function renderQuizQuestion(index) {
+                const question = learningData.quizQuestions[index];
+                
+                let optionsHTML = '';
+                question.options.forEach((option, i) => {
+                    const isSelected = quizAnswers[question.id] === i ? 'selected' : '';
+                    optionsHTML += `
+                        <div class="answer-option ${isSelected}" data-option="${i}">
+                            ${option}
+                        </div>
+                    `;
+                });
+                
+                mainContent.innerHTML = `
+                    <h2 class="mb-4">Quiz</h2>
+                    <div class="quiz-progress">
+                        <div class="d-flex justify-content-between">
+                            <span>Soal ${index + 1} dari ${learningData.quizQuestions.length}</span>
+                            <span>${Math.round(((index) / learningData.quizQuestions.length) * 100)}% selesai</span>
+                        </div>
+                        <div class="progress mt-2">
+                            <div class="progress-bar" role="progressbar" style="width: ${((index) / learningData.quizQuestions.length) * 100}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="question-container active">
+                        <h4>${question.question}</h4>
+                        <div class="options mt-4">
+                            ${optionsHTML}
+                        </div>
+                        
+                        <div class="navigation-buttons">
+                            ${index > 0 ? '<button class="btn btn-secondary btn-prev">Sebelumnya</button>' : ''}
+                            ${index < learningData.quizQuestions.length - 1 ? 
+                                '<button class="btn btn-primary btn-next">Selanjutnya</button>' : 
+                                '<button class="btn btn-success btn-finish">Selesai</button>'}
+                        </div>
+                    </div>
+                `;
+                
+                // Tambahkan event listener untuk pilihan jawaban
+                document.querySelectorAll('.answer-option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        // Hapus selected dari semua option
+                        document.querySelectorAll('.answer-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        
+                        // Tambahkan selected ke option yang diklik
+                        this.classList.add('selected');
+                        
+                        // Simpan jawaban user
+                        quizAnswers[question.id] = parseInt(this.getAttribute('data-option'));
+                    });
+                });
+                
+                // Tambahkan event listener untuk tombol navigasi
+                if (index > 0) {
+                    document.querySelector('.btn-prev').addEventListener('click', () => {
+                        currentQuizQuestion--;
+                        renderQuizQuestion(currentQuizQuestion);
+                    });
+                }
+                
+                if (index < learningData.quizQuestions.length - 1) {
+                    document.querySelector('.btn-next').addEventListener('click', () => {
+                        if (quizAnswers[question.id] !== undefined) {
+                            currentQuizQuestion++;
+                            renderQuizQuestion(currentQuizQuestion);
+                        } else {
+                            alert('Silakan pilih jawaban terlebih dahulu!');
+                        }
+                    });
+                } else {
+                    document.querySelector('.btn-finish').addEventListener('click', finishQuiz);
+                }
+            }
+
+            function finishQuiz() {
+                const question = learningData.quizQuestions[currentQuizQuestion];
+                if (quizAnswers[question.id] === undefined) {
+                    alert('Silakan pilih jawaban terlebih dahulu!');
+                    return;
+                }
+
+                // Hitung skor
+                let score = 0;
+                learningData.quizQuestions.forEach(question => {
+                    if (quizAnswers[question.id] === question.answer) {
+                        score++;
+                    }
+                });
+                
+                const percentage = (score / learningData.quizQuestions.length) * 100;
+                updateProgress(percentage / 2); // Tambah progress berdasarkan performa quiz
+                
+                mainContent.innerHTML = `
+                    <div class="text-center py-5">
+                        <h2>Hasil Quiz</h2>
+                        <div class="result-display mt-4 mb-4">
+                            <div class="display-4 ${percentage >= 75 ? 'text-success' : 'text-warning'}">${percentage.toFixed(1)}%</div>
+                            <p>Anda menjawab benar ${score} dari ${learningData.quizQuestions.length} soal</p>
+                        </div>
+                        ${percentage >= 75 ? 
+                            '<div class="alert alert-success">Excellent! Anda lulus quiz ini.</div>' : 
+                            '<div class="alert alert-warning">Anda belum lulus quiz ini. Silakan pelajari kembali materinya.</div>'}
+                        <button class="btn btn-primary mt-3" id="review-quiz-answers">Review Jawaban</button>
+                        <button class="btn btn-outline-secondary mt-3" id="back-to-home">Kembali ke Beranda</button>
+                    </div>
+                `;
+                
+                document.getElementById('review-quiz-answers').addEventListener('click', reviewQuizAnswers);
+                document.getElementById('back-to-home').addEventListener('click', loadHomePage);
+            }
+
+            function reviewQuizAnswers() {
+                let reviewHTML = '<h2 class="mb-4">Review Jawaban Quiz</h2>';
+                
+                learningData.quizQuestions.forEach((question, index) => {
+                    const userAnswer = quizAnswers[question.id];
+                    const isCorrect = userAnswer === question.answer;
+                    
+                    reviewHTML += `
+                        <div class="question-review mb-4 p-3 ${isCorrect ? 'bg-success bg-opacity-10' : 'bg-danger bg-opacity-10'}">
+                            <h5>Soal ${index + 1}: ${question.question}</h5>
+                            <p class="mb-1">Jawaban Anda: <strong>${question.options[userAnswer] || 'Tidak dijawab'}</strong></p>
+                            ${!isCorrect ? `<p class="mb-1">Jawaban benar: <strong>${question.options[question.answer]}</strong></p>` : ''}
+                            <p class="mt-2 mb-0 text-muted"><small>${isCorrect ? '✓ Benar' : '✗ Salah'}</small></p>
+                        </div>
+                    `;
+                });
+                
+                reviewHTML += `
+                    <div class="text-center mt-4">
+                        <button class="btn btn-primary" id="back-to-quiz-results">Kembali ke Hasil</button>
+                    </div>
+                `;
+                
+                mainContent.innerHTML = reviewHTML;
+                document.getElementById('back-to-quiz-results').addEventListener('click', finishQuiz);
+            }
+
+            function updateProgress(value) {
+                progress = Math.min(progress + value, 100);
+                globalProgress.style.width = `${progress}%`;
+                globalProgress.setAttribute('aria-valuenow', progress);
+                
+                // Simpan progress ke localStorage
+                localStorage.setItem('learningProgress', progress);
+            }
+
+            // Load progress dari localStorage jika ada
+            if (localStorage.getItem('learningProgress')) {
+                progress = parseInt(localStorage.getItem('learningProgress'));
+                globalProgress.style.width = `${progress}%`;
+                globalProgress.setAttribute('aria-valuenow', progress);
+            }
+
+            // Load halaman beranda pertama kali
+            loadHomePage();
+        });
+    </script>
+</body>
+</html>
